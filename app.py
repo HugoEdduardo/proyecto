@@ -90,8 +90,8 @@ def enviar_correo():
         # Configuración del servidor SMTP
         smtp_server = 'smtp.gmail.com'
         smtp_port = 587
-        smtp_username = 'hugoeduardomirandabarrera@gmail.com'
-        smtp_password = 'yzamdgpllwlehkie'
+        smtp_username = ''
+        smtp_password = ''
 
         # Obtener los datos del formulario
         nombre = obtener_valor('nombre')
@@ -101,7 +101,7 @@ def enviar_correo():
         # Crear el mensaje de correo electrónico
         msg = MIMEMultipart()
         msg['From'] = smtp_username
-        msg['To'] = 'hugoeduardomirandabarrera@gmail.com' # Ingresa aquí el correo del destinatario
+        msg['To'] = '' # Ingresa aquí el correo del destinatario
         msg['Subject'] = 'Nuevo mensaje de formulario'
         msg.attach(MIMEText(f'Nombre: {nombre}\nEmail: {email}\nMensaje: {mensaje}', 'plain'))
 
@@ -109,7 +109,7 @@ def enviar_correo():
         with smtplib.SMTP(smtp_server, smtp_port) as server:
             server.starttls()
             server.login(smtp_username, smtp_password)
-            server.sendmail(smtp_username, 'hugoeduardomirandabarrera@gmail.com', msg.as_string())
+            server.sendmail(smtp_username, ', msg.as_string())
 
         # Redirigir a la página de éxito
         return redirect(url_for('procesar_formulario'))
