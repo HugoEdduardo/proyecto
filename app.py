@@ -87,7 +87,7 @@ def enviar_correo():
         smtp_server = 'smtp.gmail.com'
         smtp_port = 587
         smtp_username = 'hugoeduardomirandabarrera@gmail.com'
-        smtp_password = 'yzamdgpllwlehkie'
+        smtp_password = '?'
 
         # Obtener los datos del formulario
         nombre = obtener_valor('nombre')
