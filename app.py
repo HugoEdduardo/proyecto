@@ -3,6 +3,7 @@ import smtplib
 from email.mime.text import MIMEText
 from email.mime.multipart import MIMEMultipart
 from flask import Flask, render_template, redirect, url_for, request
+import controlador_juegos
 
 app = Flask(__name__)
 
@@ -30,6 +31,9 @@ def mochilas():
 def buy_bags():
     return render_template('buy-bags.html')
 
+@app.route('/maestra')
+def crud():
+    return render_template('juegos.html')
 
 @app.route('/aboutus')
 def aboutus_route():
@@ -86,8 +90,8 @@ def enviar_correo():
         # Configuración del servidor SMTP
         smtp_server = 'smtp.gmail.com'
         smtp_port = 587
-        smtp_username = '@gmail.com'
-        smtp_password = '?'
+        smtp_username = 'hugoeduardomirandabarrera@gmail.com'
+        smtp_password = 'yzamdgpllwlehkie'
 
         # Obtener los datos del formulario
         nombre = obtener_valor('nombre')
@@ -97,7 +101,7 @@ def enviar_correo():
         # Crear el mensaje de correo electrónico
         msg = MIMEMultipart()
         msg['From'] = smtp_username
-        msg['To'] = '@gmail.com' # Ingresa aquí el correo del destinatario
+        msg['To'] = 'hugoeduardomirandabarrera@gmail.com' # Ingresa aquí el correo del destinatario
         msg['Subject'] = 'Nuevo mensaje de formulario'
         msg.attach(MIMEText(f'Nombre: {nombre}\nEmail: {email}\nMensaje: {mensaje}', 'plain'))
 
@@ -105,7 +109,7 @@ def enviar_correo():
         with smtplib.SMTP(smtp_server, smtp_port) as server:
             server.starttls()
             server.login(smtp_username, smtp_password)
-            server.sendmail(smtp_username, '', msg.as_string())
+            server.sendmail(smtp_username, 'hugoeduardomirandabarrera@gmail.com', msg.as_string())
 
         # Redirigir a la página de éxito
         return redirect(url_for('procesar_formulario'))
@@ -113,6 +117,47 @@ def enviar_correo():
     else:
         return "Método no permitido"
 
+@app.route("/agregar_juego")
+def formulario_agregar_juego():
+    return render_template("agregar_juego.html")
+
+
+@app.route("/guardar_juego", methods=["POST"])
+def guardar_juego():
+    nombre = request.form["nombre"]
+    descripcion = request.form["descripcion"]
+    precio = request.form["precio"]
+    controlador_juegos.insertar_juego(nombre, descripcion, precio)
+    return redirect("/juegos")
+
+
+@app.route("/")
+@app.route("/juegos")
+def juegos():
+    juegos = controlador_juegos.obtener_juegos()
+    return render_template("juegos.html", juegos=juegos)
+
+
+@app.route("/eliminar_juego", methods=["POST"])
+def eliminar_juego():
+    controlador_juegos.eliminar_juego(request.form["id"])
+    return redirect("/juegos")
+
+
+@app.route("/formulario_editar_juego/<int:id>")
+def editar_juego(id):
+    # Obtener el juego por ID
+    juego = controlador_juegos.obtener_juego_por_id(id)
+    return render_template("editar_juego.html", juego=juego)
+
+@app.route("/actualizar_juego", methods=["POST"])
+def actualizar_juego():
+    id = request.form["id"]
+    nombre = request.form["nombre"]
+    descripcion = request.form["descripcion"]
+    precio = request.form["precio"]
+    controlador_juegos.actualizar_juego(nombre, descripcion, precio, id)
+    return redirect("/juegos")
 
 if __name__ == '__main__':
     app.run(debug=True)
